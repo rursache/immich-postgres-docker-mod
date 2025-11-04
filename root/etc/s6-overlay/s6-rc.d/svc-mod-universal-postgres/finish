@@ -1,7 +1,7 @@
 #!/usr/bin/with-contenv bash
 
-# PostgreSQL 15 with pgvecto-rs extension
-PGVERSION=15
+# PostgreSQL 14 with VectorChord extension (Immich official image)
+PGVERSION=14
 
 # for ubuntu
 export PATH=$PATH:/usr/lib/postgresql/${PGVERSION}/bin/
