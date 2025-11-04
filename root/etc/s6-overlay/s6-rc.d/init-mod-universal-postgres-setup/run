@@ -49,5 +49,24 @@ else
 		echo "Updating shared_preload_libraries configuration"
 		sed -i "/^shared_preload_libraries/d" /config/postgres/postgresql.conf
 		echo "shared_preload_libraries = 'pg_stat_statements,vchord'" >> /config/postgres/postgresql.conf
+
+		# Migration: Remove old pgvecto-rs extension and indexes if they exist
+		echo "Checking for old pgvecto-rs extension that needs migration..."
+		s6-setuidgid postgres pg_ctl -D /config/postgres/ -o '-c listen_addresses= -p 5432' -w start
+
+		# Drop old vector indexes if they exist (they'll be recreated by Immich)
+		s6-setuidgid postgres psql -c "DROP INDEX IF EXISTS clip_index;" 2>/dev/null || true
+		s6-setuidgid postgres psql -c "DROP INDEX IF EXISTS face_index;" 2>/dev/null || true
+
+		# Try to drop the old vectors extension if it exists
+		s6-setuidgid postgres psql -c "DROP EXTENSION IF EXISTS vectors CASCADE;" 2>/dev/null || true
+
+		# Create the new VectorChord extension
+		s6-setuidgid postgres psql -c "CREATE EXTENSION IF NOT EXISTS vectors;"
+
+		echo "Migration complete - old indexes dropped, VectorChord extension ready"
+		echo "Immich will recreate the vector indexes automatically on startup"
+
+		s6-setuidgid postgres pg_ctl -D /config/postgres/ -m fast -w stop
 	fi
 fi
