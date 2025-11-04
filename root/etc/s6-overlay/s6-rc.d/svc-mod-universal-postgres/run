@@ -1,6 +1,6 @@
 #!/usr/bin/with-contenv bash
 
-# PostgreSQL 15 with pgvecto-rs extension
+# PostgreSQL 15 with VectorChord extension
 PGVERSION=15
 
 # for ubuntu
@@ -11,4 +11,4 @@ exec s6-setuidgid postgres \
 	postgres -D /config/postgres/ \
 	-c listen_addresses=localhost \
 	-c port=5432 \
-	-c shared_preload_libraries='pg_stat_statements,vectors.so'
+	-c shared_preload_libraries='pg_stat_statements'

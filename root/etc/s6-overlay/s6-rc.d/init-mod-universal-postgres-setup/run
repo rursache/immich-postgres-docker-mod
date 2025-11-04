@@ -34,8 +34,8 @@ if [ ! -f /config/postgres/PG_VERSION ]; then
 	echo "Initializing PostgreSQL Database with VectorChord extension"
 	s6-setuidgid postgres initdb -D /config/postgres/ --username=postgres
 
-	# Configure shared_preload_libraries for pg_stat_statements and vectors.so
-	echo "shared_preload_libraries = 'pg_stat_statements,vectors.so'" >> /config/postgres/postgresql.conf
+	# Configure shared_preload_libraries for pg_stat_statements
+	echo "shared_preload_libraries = 'pg_stat_statements'" >> /config/postgres/postgresql.conf
 
 	s6-setuidgid postgres pg_ctl -D /config/postgres/ -o '-c listen_addresses= -p 5432' -w start
 	s6-setuidgid postgres psql -c "ALTER USER postgres WITH PASSWORD 'postgres';"
@@ -45,9 +45,9 @@ if [ ! -f /config/postgres/PG_VERSION ]; then
 else
 	echo "PostgreSQL Database Already Initialised"
 	# Ensure shared_preload_libraries is set correctly in existing installations
-	if ! grep -q "shared_preload_libraries.*vectors.so" /config/postgres/postgresql.conf; then
+	if ! grep -q "shared_preload_libraries.*pg_stat_statements" /config/postgres/postgresql.conf; then
 		echo "Updating shared_preload_libraries configuration"
 		sed -i "/^shared_preload_libraries/d" /config/postgres/postgresql.conf
-		echo "shared_preload_libraries = 'pg_stat_statements,vectors.so'" >> /config/postgres/postgresql.conf
+		echo "shared_preload_libraries = 'pg_stat_statements'" >> /config/postgres/postgresql.conf
 	fi
 fi
