@@ -1,20 +1,21 @@
 #!/usr/bin/with-contenv bash
 
-# Set default PostgreSQL version
-PGVERSION=${PG_VERSION:-14}
+# PostgreSQL 15 with pgvecto-rs is pre-installed via docker mod
+# This mod uses tensorchord/pgvecto-rs:pg15-v0.2.0
+PGVERSION=15
 
-if ! command -v psql; then
-	echo "**** Adding PostgreSQL to package install list ****"
+# Ensure postgres user exists
+if ! id -u postgres >/dev/null 2>&1; then
+	echo "**** Creating postgres user ****"
 	if [ -f /usr/bin/apt ]; then
-		## Ubuntu
-		echo "postgresql-${PGVERSION}" >>/mod-repo-packages-to-install.list
-	fi
-
-	if [ -f /sbin/apk ]; then
+		# Ubuntu
+		useradd -r -s /bin/bash -d /var/lib/postgresql postgres
+	elif [ -f /sbin/apk ]; then
 		# Alpine
-		echo "postgresql${PGVERSION} \
-postgresql${PGVERSION}-contrib" >>/mod-repo-packages-to-install.list
+		adduser -D -H -s /bin/sh postgres
 	fi
 else
-	echo "**** PostgreSQL already installed, skipping ****"
+	echo "**** PostgreSQL user already exists ****"
 fi
+
+echo "**** PostgreSQL 15 with pgvecto-rs binaries included in mod ****"

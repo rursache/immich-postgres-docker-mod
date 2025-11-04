@@ -1,7 +1,7 @@
 #!/usr/bin/with-contenv bash
 
-# Set default PostgreSQL version
-PGVERSION=${PG_VERSION:-14}
+# PostgreSQL 15 with pgvecto-rs extension
+PGVERSION=15
 
 # for ubuntu
 export PATH=$PATH:/usr/lib/postgresql/${PGVERSION}/bin/
@@ -24,11 +24,23 @@ chown -R postgres:postgres \
 
 # Initialize PostgreSQL database if not already initialized
 if [ ! -f /config/postgres/PG_VERSION ]; then
-	echo "Initializing PostgreSQL Database"
+	echo "Initializing PostgreSQL Database with pgvecto-rs extension"
 	s6-setuidgid postgres initdb -D /config/postgres/ --username=postgres
+
+	# Configure shared_preload_libraries for pg_stat_statements and vectors.so
+	echo "shared_preload_libraries = 'pg_stat_statements,vectors.so'" >> /config/postgres/postgresql.conf
+
 	s6-setuidgid postgres pg_ctl -D /config/postgres/ -o '-c listen_addresses= -p 5432' -w start
 	s6-setuidgid postgres psql -c "ALTER USER postgres WITH PASSWORD 'postgres';"
+	s6-setuidgid postgres psql -c "CREATE EXTENSION IF NOT EXISTS pg_stat_statements;"
+	s6-setuidgid postgres psql -c "CREATE EXTENSION IF NOT EXISTS vectors;"
 	s6-setuidgid postgres pg_ctl -D /config/postgres/ -m fast -w stop
 else
 	echo "PostgreSQL Database Already Initialised"
+	# Ensure shared_preload_libraries is set correctly in existing installations
+	if ! grep -q "shared_preload_libraries.*vectors.so" /config/postgres/postgresql.conf; then
+		echo "Updating shared_preload_libraries configuration"
+		sed -i "/^shared_preload_libraries/d" /config/postgres/postgresql.conf
+		echo "shared_preload_libraries = 'pg_stat_statements,vectors.so'" >> /config/postgres/postgresql.conf
+	fi
 fi
