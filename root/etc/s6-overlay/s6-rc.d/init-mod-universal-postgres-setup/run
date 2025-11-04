@@ -24,6 +24,13 @@ chown -R postgres:postgres \
 
 # Initialize PostgreSQL database if not already initialized
 if [ ! -f /config/postgres/PG_VERSION ]; then
+	# Check if directory exists and is not empty (incomplete initialization)
+	if [ -d /config/postgres ] && [ "$(ls -A /config/postgres)" ]; then
+		echo "WARNING: /config/postgres exists but is not a valid database cluster"
+		echo "Cleaning up incomplete initialization..."
+		rm -rf /config/postgres/*
+	fi
+
 	echo "Initializing PostgreSQL Database with pgvecto-rs extension"
 	s6-setuidgid postgres initdb -D /config/postgres/ --username=postgres
 
