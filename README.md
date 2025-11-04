@@ -95,6 +95,61 @@ The mod automatically migrates from the old pgvecto-rs extension to the new Vect
 
 No manual intervention required!
 
+## Migrating from External PostgreSQL to Internal
+
+If you're currently using an external PostgreSQL database and want to migrate to the internal PostgreSQL provided by this mod, follow these steps:
+
+### 1. Backup Your External Database
+
+First, create a backup of your existing Immich database from your external PostgreSQL server:
+
+```bash
+pg_dump -U postgres -d immich -h your-external-postgres-host -W -F tar -f immich.tar
+```
+
+### 2. Copy Backup to Container
+
+Copy the backup file to your Immich container:
+
+```bash
+docker cp immich.tar immich:/config/
+```
+
+### 3. Restore Database
+
+Enter the container and restore the database:
+
+```bash
+# Enter the container
+docker exec -it immich bash
+
+# Restore the database
+pg_restore -U postgres -d postgres -h localhost -W --clean --no-owner /config/immich.tar
+```
+
+When prompted for a password, enter `postgres`.
+
+### 4. Update Configuration
+
+Update your Immich container environment variables to point to localhost:
+```bash
+-e DB_HOSTNAME=localhost \
+-e DB_USERNAME=postgres \
+-e DB_PASSWORD=postgres \
+-e DB_DATABASE_NAME=postgres \
+-e DB_PORT=5432 \
+```
+
+### 5. Restart Container
+
+Restart the container to complete the migration:
+
+```bash
+docker restart immich
+```
+
+Your data should now be fully migrated to the internal PostgreSQL database, and you can safely decommission your external PostgreSQL server!
+
 ## Compatibility
 
 - Works with all ImageGenius Immich variants: `immich:latest`, `immich:openvino`, `immich:cuda`, etc.
