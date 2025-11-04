@@ -1,7 +1,7 @@
 #!/usr/bin/with-contenv bash
 
-# PostgreSQL 15 with pgvecto-rs is pre-installed via docker mod
-# This mod uses tensorchord/pgvecto-rs:pg15-v0.2.0
+# PostgreSQL 15 with VectorChord is pre-installed via docker mod
+# This mod uses ghcr.io/tensorchord/vchord-postgres:pg15-v0.4.3
 # All required system libraries are bundled in the mod
 PGVERSION=15
 
@@ -19,4 +19,4 @@ else
 	echo "**** PostgreSQL user already exists ****"
 fi
 
-echo "**** PostgreSQL 15 with pgvecto-rs binaries and dependencies included in mod ****"
+echo "**** PostgreSQL 15 with VectorChord binaries and dependencies included in mod ****"

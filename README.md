@@ -1,6 +1,6 @@
-# PostgreSQL with pgvecto-rs - Docker Mod
+# PostgreSQL with VectorChord - Docker Mod
 
-This mod installs and starts PostgreSQL 15 with the pgvecto-rs extension (vector similarity search), based on `tensorchord/pgvecto-rs:pg15-v0.2.0`.
+This mod installs and starts PostgreSQL 15 with the VectorChord extension (vector similarity search), based on `ghcr.io/tensorchord/vchord-postgres:pg15-v0.4.3`.
 
 ## Credits
 
@@ -8,7 +8,7 @@ This project is based on the excellent work by the [ImageGenius team](https://gi
 
 ## Features
 
-- PostgreSQL 15 with pgvecto-rs extension for vector similarity search
+- PostgreSQL 15 with VectorChord extension for vector similarity search
 - Pre-configured with `pg_stat_statements` and `vectors.so` shared libraries
 - Automatic database initialization on first run
 - Extensions automatically created: `pg_stat_statements` and `vectors`
@@ -27,7 +27,7 @@ DOCKER_MODS=rursache/immich-postgres-docker-mod:master|linuxserver/mods:other-mo
 
 ## Configuration
 
-- **PostgreSQL Version**: Fixed at PostgreSQL 15 (with pgvecto-rs v0.2.0)
+- **PostgreSQL Version**: Fixed at PostgreSQL 15 (with VectorChord v0.4.3)
 - **Default Credentials**:
   - Username: `postgres`
   - Password: `postgres`
@@ -41,4 +41,4 @@ The default `password`, `database`, and `user` for the PostgreSQL installation a
 
 The following PostgreSQL extensions are automatically installed:
 - **pg_stat_statements**: Track execution statistics of SQL statements
-- **vectors**: pgvecto-rs vector similarity search extension
+- **vectors**: VectorChord vector similarity search extension (successor to pgvecto-rs)
