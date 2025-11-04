@@ -2,6 +2,10 @@
 
 This mod installs and starts PostgreSQL 15 with the pgvecto-rs extension (vector similarity search), based on `tensorchord/pgvecto-rs:pg15-v0.2.0`.
 
+## Credits
+
+This project is based on the excellent work by the [ImageGenius team](https://github.com/imagegenius/docker-mods/tree/universal-postgres). Thank you for creating the original universal-postgres docker mod!
+
 ## Features
 
 - PostgreSQL 15 with pgvecto-rs extension for vector similarity search
@@ -13,12 +17,12 @@ This mod installs and starts PostgreSQL 15 with the pgvecto-rs extension (vector
 
 In docker arguments, set an environment variable:
 ```
-DOCKER_MODS=imagegenius/mods:universal-postgres
+DOCKER_MODS=rursache/immich-postgres-docker-mod:master
 ```
 
 If adding multiple mods, enter them in an array separated by `|`:
 ```
-DOCKER_MODS=linuxserver/mods:swag-ffmpeg|linuxserver/mods:swag-mod2
+DOCKER_MODS=rursache/immich-postgres-docker-mod:master|linuxserver/mods:other-mod
 ```
 
 ## Configuration
