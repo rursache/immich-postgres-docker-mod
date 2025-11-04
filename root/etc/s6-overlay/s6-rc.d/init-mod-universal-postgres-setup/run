@@ -1,6 +1,6 @@
 #!/usr/bin/with-contenv bash
 
-# PostgreSQL 15 with pgvecto-rs extension
+# PostgreSQL 15 with VectorChord extension
 PGVERSION=15
 
 # for ubuntu
@@ -31,7 +31,7 @@ if [ ! -f /config/postgres/PG_VERSION ]; then
 		rm -rf /config/postgres/*
 	fi
 
-	echo "Initializing PostgreSQL Database with pgvecto-rs extension"
+	echo "Initializing PostgreSQL Database with VectorChord extension"
 	s6-setuidgid postgres initdb -D /config/postgres/ --username=postgres
 
 	# Configure shared_preload_libraries for pg_stat_statements and vectors.so

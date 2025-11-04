@@ -1,12 +1,12 @@
-FROM tensorchord/pgvecto-rs:pg15-v0.2.0 AS pgvecto-source
+FROM ghcr.io/tensorchord/vchord-postgres:pg15-v0.4.3 AS vectorchord-source
 
 # Build stage to prepare the overlay filesystem
-FROM pgvecto-source AS builder
+FROM vectorchord-source AS builder
 
 # Copy our local files (s6-overlay services) to a staging directory
 COPY root/ /tmp/mod-root/
 
-# Copy PostgreSQL 15 and pgvecto-rs files into the staging directory
+# Copy PostgreSQL 15 and vectorchord files into the staging directory
 # This includes:
 #   - /usr/lib/postgresql/15/bin/ (postgres, psql, pg_ctl, initdb, etc.)
 #   - /usr/lib/postgresql/15/lib/ (shared libraries including vectors.so)
