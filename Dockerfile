@@ -16,8 +16,7 @@ RUN mkdir -p /tmp/mod-root/usr/lib/postgresql/15 \
              /tmp/mod-root/usr/share/postgresql/15 \
              /tmp/mod-root/usr/share/postgresql \
              /tmp/mod-root/usr/share/postgresql-common \
-             /tmp/mod-root/usr/lib/x86_64-linux-gnu \
-             /tmp/mod-root/lib/x86_64-linux-gnu && \
+             /tmp/mod-root/usr/lib/x86_64-linux-gnu && \
     cp -a /usr/lib/postgresql/15/. /tmp/mod-root/usr/lib/postgresql/15/ && \
     cp -a /usr/share/postgresql/15/. /tmp/mod-root/usr/share/postgresql/15/ 2>/dev/null || true && \
     cp -a /usr/share/postgresql/. /tmp/mod-root/usr/share/postgresql/ 2>/dev/null || true && \
@@ -50,8 +49,9 @@ RUN mkdir -p /tmp/mod-root/usr/lib/postgresql/15 \
     cp -a /usr/lib/x86_64-linux-gnu/libicui18n* /tmp/mod-root/usr/lib/x86_64-linux-gnu/ 2>/dev/null || true && \
     # Copy UUID libraries
     cp -a /usr/lib/x86_64-linux-gnu/libuuid* /tmp/mod-root/usr/lib/x86_64-linux-gnu/ 2>/dev/null || true && \
-    # Copy additional dependencies
-    cp -a /lib/x86_64-linux-gnu/libkeyutils* /tmp/mod-root/lib/x86_64-linux-gnu/ 2>/dev/null || true && \
+    # Copy libkeyutils from /lib or /usr/lib (both locations are tried since /lib may be a symlink)
+    cp -a /lib/x86_64-linux-gnu/libkeyutils* /tmp/mod-root/usr/lib/x86_64-linux-gnu/ 2>/dev/null || \
+    cp -a /usr/lib/x86_64-linux-gnu/libkeyutils* /tmp/mod-root/usr/lib/x86_64-linux-gnu/ 2>/dev/null || true && \
     echo "System libraries copied"
 
 # Final stage - create the mod overlay
