@@ -1,4 +1,4 @@
-FROM ghcr.io/immich-app/postgres:14-vectorchord0.4.3-pgvectors0.2.0 AS immich-postgres-source
+FROM ghcr.io/immich-app/postgres:15-vectorchord0.4.3-pgvectors0.2.0 AS immich-postgres-source
 
 # Build stage to prepare the overlay filesystem
 FROM immich-postgres-source AS builder
@@ -6,23 +6,23 @@ FROM immich-postgres-source AS builder
 # Copy our local files (s6-overlay services) to a staging directory
 COPY root/ /tmp/mod-root/
 
-# Copy PostgreSQL 14 and VectorChord files into the staging directory
+# Copy PostgreSQL 15 and VectorChord files into the staging directory
 # This includes:
-#   - /usr/lib/postgresql/14/bin/ (postgres, psql, pg_ctl, initdb, etc.)
-#   - /usr/lib/postgresql/14/lib/ (shared libraries including VectorChord)
-#   - /usr/share/postgresql/14/ (data files, extensions, SQL scripts)
+#   - /usr/lib/postgresql/15/bin/ (postgres, psql, pg_ctl, initdb, etc.)
+#   - /usr/lib/postgresql/15/lib/ (shared libraries including VectorChord)
+#   - /usr/share/postgresql/15/ (data files, extensions, SQL scripts)
 #   - System libraries that PostgreSQL depends on
-RUN mkdir -p /tmp/mod-root/usr/lib/postgresql/14 \
-             /tmp/mod-root/usr/share/postgresql/14 \
+RUN mkdir -p /tmp/mod-root/usr/lib/postgresql/15 \
+             /tmp/mod-root/usr/share/postgresql/15 \
              /tmp/mod-root/usr/share/postgresql \
              /tmp/mod-root/usr/share/postgresql-common \
              /tmp/mod-root/usr/lib/x86_64-linux-gnu && \
-    cp -a /usr/lib/postgresql/14/. /tmp/mod-root/usr/lib/postgresql/14/ && \
-    cp -a /usr/share/postgresql/14/. /tmp/mod-root/usr/share/postgresql/14/ 2>/dev/null || true && \
+    cp -a /usr/lib/postgresql/15/. /tmp/mod-root/usr/lib/postgresql/15/ && \
+    cp -a /usr/share/postgresql/15/. /tmp/mod-root/usr/share/postgresql/15/ 2>/dev/null || true && \
     cp -a /usr/share/postgresql/. /tmp/mod-root/usr/share/postgresql/ 2>/dev/null || true && \
     cp -a /usr/share/postgresql-common/. /tmp/mod-root/usr/share/postgresql-common/ 2>/dev/null || true && \
     echo "Checking for postgresql.conf.sample..." && \
-    find /usr/share -name "postgresql.conf.sample" -exec cp -v {} /tmp/mod-root/usr/share/postgresql/14/ \; || \
+    find /usr/share -name "postgresql.conf.sample" -exec cp -v {} /tmp/mod-root/usr/share/postgresql/15/ \; || \
     find /tmp/mod-root/usr/share -name "postgresql.conf.sample" || \
     echo "Warning: postgresql.conf.sample not found" && \
     echo "Copying required system libraries..." && \

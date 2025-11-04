@@ -1,9 +1,9 @@
 #!/usr/bin/with-contenv bash
 
-# PostgreSQL 14 with VectorChord is pre-installed via docker mod
-# This mod uses ghcr.io/immich-app/postgres:14-vectorchord0.4.3-pgvectors0.2.0 (Immich official image)
+# PostgreSQL 15 with VectorChord is pre-installed via docker mod
+# This mod uses ghcr.io/immich-app/postgres:15-vectorchord0.4.3-pgvectors0.2.0 (Immich official image)
 # All required system libraries are bundled in the mod
-PGVERSION=14
+PGVERSION=15
 
 # Ensure postgres user exists
 if ! id -u postgres >/dev/null 2>&1; then
@@ -19,4 +19,4 @@ else
 	echo "**** PostgreSQL user already exists ****"
 fi
 
-echo "**** PostgreSQL 14 with VectorChord binaries and dependencies included in mod ****"
+echo "**** PostgreSQL 15 with VectorChord binaries and dependencies included in mod ****"
