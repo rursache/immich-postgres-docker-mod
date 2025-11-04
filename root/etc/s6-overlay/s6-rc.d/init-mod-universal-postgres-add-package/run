@@ -2,27 +2,8 @@
 
 # PostgreSQL 15 with pgvecto-rs is pre-installed via docker mod
 # This mod uses tensorchord/pgvecto-rs:pg15-v0.2.0
+# All required system libraries are bundled in the mod
 PGVERSION=15
-
-# Add PostgreSQL runtime dependencies to package install list
-echo "**** Adding PostgreSQL dependencies to package install list ****"
-if [ -f /usr/bin/apt ]; then
-	# Ubuntu/Debian - add runtime dependencies
-	echo "libldap-2.5-0" >> /mod-repo-packages-to-install.list
-	echo "libldap-common" >> /mod-repo-packages-to-install.list
-	echo "libpq5" >> /mod-repo-packages-to-install.list
-	echo "libssl3" >> /mod-repo-packages-to-install.list
-	echo "libxml2" >> /mod-repo-packages-to-install.list
-	echo "libxslt1.1" >> /mod-repo-packages-to-install.list
-	echo "postgresql-common" >> /mod-repo-packages-to-install.list
-elif [ -f /sbin/apk ]; then
-	# Alpine
-	echo "libldap" >> /mod-repo-packages-to-install.list
-	echo "libpq" >> /mod-repo-packages-to-install.list
-	echo "openssl" >> /mod-repo-packages-to-install.list
-	echo "libxml2" >> /mod-repo-packages-to-install.list
-	echo "libxslt" >> /mod-repo-packages-to-install.list
-fi
 
 # Ensure postgres user exists
 if ! id -u postgres >/dev/null 2>&1; then
@@ -38,4 +19,4 @@ else
 	echo "**** PostgreSQL user already exists ****"
 fi
 
-echo "**** PostgreSQL 15 with pgvecto-rs binaries included in mod ****"
+echo "**** PostgreSQL 15 with pgvecto-rs binaries and dependencies included in mod ****"

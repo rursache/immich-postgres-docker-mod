@@ -11,13 +11,40 @@ COPY root/ /tmp/mod-root/
 #   - /usr/lib/postgresql/15/bin/ (postgres, psql, pg_ctl, initdb, etc.)
 #   - /usr/lib/postgresql/15/lib/ (shared libraries including vectors.so)
 #   - /usr/share/postgresql/15/ (data files, extensions, SQL scripts)
+#   - System libraries that PostgreSQL depends on
 RUN mkdir -p /tmp/mod-root/usr/lib/postgresql/15 \
-             /tmp/mod-root/usr/share/postgresql/15 && \
+             /tmp/mod-root/usr/share/postgresql/15 \
+             /tmp/mod-root/usr/lib/x86_64-linux-gnu \
+             /tmp/mod-root/lib/x86_64-linux-gnu && \
     cp -a /usr/lib/postgresql/15/. /tmp/mod-root/usr/lib/postgresql/15/ && \
     cp -a /usr/share/postgresql/15/. /tmp/mod-root/usr/share/postgresql/15/ && \
     echo "PostgreSQL files copied:" && \
     ls -la /tmp/mod-root/usr/lib/postgresql/15/bin/ | head -5 && \
-    ls -la /tmp/mod-root/usr/lib/postgresql/15/lib/ | grep vectors || true
+    ls -la /tmp/mod-root/usr/lib/postgresql/15/lib/ | grep vectors || true && \
+    echo "Copying required system libraries..." && \
+    # Copy LDAP libraries
+    cp -a /usr/lib/x86_64-linux-gnu/libldap* /tmp/mod-root/usr/lib/x86_64-linux-gnu/ 2>/dev/null || true && \
+    cp -a /usr/lib/x86_64-linux-gnu/liblber* /tmp/mod-root/usr/lib/x86_64-linux-gnu/ 2>/dev/null || true && \
+    # Copy SASL libraries (used by LDAP)
+    cp -a /usr/lib/x86_64-linux-gnu/libsasl* /tmp/mod-root/usr/lib/x86_64-linux-gnu/ 2>/dev/null || true && \
+    # Copy GSSAPI libraries (used by LDAP)
+    cp -a /usr/lib/x86_64-linux-gnu/libgssapi* /tmp/mod-root/usr/lib/x86_64-linux-gnu/ 2>/dev/null || true && \
+    # Copy Kerberos libraries
+    cp -a /usr/lib/x86_64-linux-gnu/libkrb5* /tmp/mod-root/usr/lib/x86_64-linux-gnu/ 2>/dev/null || true && \
+    cp -a /usr/lib/x86_64-linux-gnu/libk5crypto* /tmp/mod-root/usr/lib/x86_64-linux-gnu/ 2>/dev/null || true && \
+    cp -a /usr/lib/x86_64-linux-gnu/libcom_err* /tmp/mod-root/usr/lib/x86_64-linux-gnu/ 2>/dev/null || true && \
+    # Copy additional PostgreSQL dependencies
+    cp -a /usr/lib/x86_64-linux-gnu/libpq* /tmp/mod-root/usr/lib/x86_64-linux-gnu/ 2>/dev/null || true && \
+    cp -a /usr/lib/x86_64-linux-gnu/libxml2* /tmp/mod-root/usr/lib/x86_64-linux-gnu/ 2>/dev/null || true && \
+    cp -a /usr/lib/x86_64-linux-gnu/libxslt* /tmp/mod-root/usr/lib/x86_64-linux-gnu/ 2>/dev/null || true && \
+    cp -a /usr/lib/x86_64-linux-gnu/libicuuc* /tmp/mod-root/usr/lib/x86_64-linux-gnu/ 2>/dev/null || true && \
+    cp -a /usr/lib/x86_64-linux-gnu/libicudata* /tmp/mod-root/usr/lib/x86_64-linux-gnu/ 2>/dev/null || true && \
+    cp -a /usr/lib/x86_64-linux-gnu/libicui18n* /tmp/mod-root/usr/lib/x86_64-linux-gnu/ 2>/dev/null || true && \
+    # Copy UUID libraries
+    cp -a /usr/lib/x86_64-linux-gnu/libuuid* /tmp/mod-root/usr/lib/x86_64-linux-gnu/ 2>/dev/null || true && \
+    # Copy additional dependencies
+    cp -a /lib/x86_64-linux-gnu/libkeyutils* /tmp/mod-root/lib/x86_64-linux-gnu/ 2>/dev/null || true && \
+    echo "System libraries copied"
 
 # Final stage - create the mod overlay
 FROM scratch
