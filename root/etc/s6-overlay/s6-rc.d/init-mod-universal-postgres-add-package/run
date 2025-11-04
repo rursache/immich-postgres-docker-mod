@@ -1,0 +1,20 @@
+#!/usr/bin/with-contenv bash
+
+# Set default PostgreSQL version
+PGVERSION=${PG_VERSION:-14}
+
+if ! command -v psql; then
+	echo "**** Adding PostgreSQL to package install list ****"
+	if [ -f /usr/bin/apt ]; then
+		## Ubuntu
+		echo "postgresql-${PGVERSION}" >>/mod-repo-packages-to-install.list
+	fi
+
+	if [ -f /sbin/apk ]; then
+		# Alpine
+		echo "postgresql${PGVERSION} \
+postgresql${PGVERSION}-contrib" >>/mod-repo-packages-to-install.list
+	fi
+else
+	echo "**** PostgreSQL already installed, skipping ****"
+fi
