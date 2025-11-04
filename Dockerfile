@@ -14,13 +14,21 @@ COPY root/ /tmp/mod-root/
 #   - System libraries that PostgreSQL depends on
 RUN mkdir -p /tmp/mod-root/usr/lib/postgresql/15 \
              /tmp/mod-root/usr/share/postgresql/15 \
+             /tmp/mod-root/usr/share/postgresql \
+             /tmp/mod-root/usr/share/postgresql-common \
              /tmp/mod-root/usr/lib/x86_64-linux-gnu \
              /tmp/mod-root/lib/x86_64-linux-gnu && \
     cp -a /usr/lib/postgresql/15/. /tmp/mod-root/usr/lib/postgresql/15/ && \
-    cp -a /usr/share/postgresql/15/. /tmp/mod-root/usr/share/postgresql/15/ && \
+    cp -a /usr/share/postgresql/15/. /tmp/mod-root/usr/share/postgresql/15/ 2>/dev/null || true && \
+    cp -a /usr/share/postgresql/. /tmp/mod-root/usr/share/postgresql/ 2>/dev/null || true && \
+    cp -a /usr/share/postgresql-common/. /tmp/mod-root/usr/share/postgresql-common/ 2>/dev/null || true && \
     echo "PostgreSQL files copied:" && \
     ls -la /tmp/mod-root/usr/lib/postgresql/15/bin/ | head -5 && \
     ls -la /tmp/mod-root/usr/lib/postgresql/15/lib/ | grep vectors || true && \
+    echo "Checking for postgresql.conf.sample..." && \
+    find /usr/share -name "postgresql.conf.sample" -exec cp -v {} /tmp/mod-root/usr/share/postgresql/15/ \; || \
+    find /tmp/mod-root/usr/share -name "postgresql.conf.sample" || \
+    echo "Warning: postgresql.conf.sample not found" && \
     echo "Copying required system libraries..." && \
     # Copy LDAP libraries
     cp -a /usr/lib/x86_64-linux-gnu/libldap* /tmp/mod-root/usr/lib/x86_64-linux-gnu/ 2>/dev/null || true && \
