@@ -12,18 +12,24 @@ COPY root/ /tmp/mod-root/
 #   - /usr/lib/postgresql/15/lib/ (shared libraries including vectors.so)
 #   - /usr/share/postgresql/15/ (data files, extensions, SQL scripts)
 #   - System libraries that PostgreSQL depends on
-RUN mkdir -p /tmp/mod-root/usr/lib/postgresql/15 \
+RUN echo "=== Searching for vectors.so in source image ===" && \
+    find /usr -name "vectors.so" -ls && \
+    echo "=== Creating directory structure ===" && \
+    mkdir -p /tmp/mod-root/usr/lib/postgresql/15 \
              /tmp/mod-root/usr/share/postgresql/15 \
              /tmp/mod-root/usr/share/postgresql \
              /tmp/mod-root/usr/share/postgresql-common \
              /tmp/mod-root/usr/lib/x86_64-linux-gnu && \
+    echo "=== Copying PostgreSQL 15 files ===" && \
     cp -a /usr/lib/postgresql/15/. /tmp/mod-root/usr/lib/postgresql/15/ && \
     cp -a /usr/share/postgresql/15/. /tmp/mod-root/usr/share/postgresql/15/ 2>/dev/null || true && \
     cp -a /usr/share/postgresql/. /tmp/mod-root/usr/share/postgresql/ 2>/dev/null || true && \
     cp -a /usr/share/postgresql-common/. /tmp/mod-root/usr/share/postgresql-common/ 2>/dev/null || true && \
     echo "PostgreSQL files copied:" && \
     ls -la /tmp/mod-root/usr/lib/postgresql/15/bin/ | head -5 && \
-    ls -la /tmp/mod-root/usr/lib/postgresql/15/lib/ | grep vectors || true && \
+    echo "Checking for vectors.so:" && \
+    find /tmp/mod-root -name "vectors.so" -ls || echo "WARNING: vectors.so not found!" && \
+    ls -la /tmp/mod-root/usr/lib/postgresql/15/lib/ 2>/dev/null || echo "lib directory not found" && \
     echo "Checking for postgresql.conf.sample..." && \
     find /usr/share -name "postgresql.conf.sample" -exec cp -v {} /tmp/mod-root/usr/share/postgresql/15/ \; || \
     find /tmp/mod-root/usr/share -name "postgresql.conf.sample" || \
